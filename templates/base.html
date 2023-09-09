@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title> {% block title %} {% endblock %} </title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
+    {% block head %} {% endblock %}
+</head>
+<body>
+	{% block body %}
+ 	{%　endblock %}
+    <script>
+        window.alert = function(name){
+                                var iframe = document.createElement("IFRAME");
+                                iframe.style.display="none";
+                                iframe.setAttribute("src", 'data:text/plain,');
+                                document.documentElement.appendChild(iframe);
+                                window.frames[0].window.alert(name);
+                                iframe.parentNode.removeChild(iframe);
+                        }
+    </script>
+ 	{% block js %}
+
+ 	{% endblock %}
+</body>
+</html>

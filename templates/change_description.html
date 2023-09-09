@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}編輯備註{% endblock %}
+
+{% block head %}
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+	<style>
+	body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", Arial, Helvetica, sans-serif}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<div id ='message'>
+		{% for message in messages %}
+		  <div class="alert alert-{{message.tags}}" id ='error_text'>{{message}}</div>
+		{% endfor %}
+	</div>
+	<div id ='error'></div>
+	<div class="w3-container w3-red">
+		 <h2><i class="fas fa-hamburger w3-margin-right"></i>編輯備註</h2>
+	</div>
+	<br>
+	<br>
+	<br>
+	
+		<form action='.' method='POST' id ='userform'>
+			{% csrf_token %}
+			
+			<div  class='container-fluid' id ='description'>
+				
+			</div>
+			
+			<br>
+			<div align='center' id='button_div'>
+				
+			</div>
+			<input type ='hidden' id = 'order_id' value='{{order_id}}'>
+			<p id = 'log'></p>
+		</form>
+	
+{% endblock %}
+
+{% block js %}
+	<script>
+		$(document).ready(function () {
+		// Using a Promise object
+			liff.init({
+				liffId: '1657551781-mke9ezx0' // Use own liffId
+			}).then(() => {
+					
+					if (liff.isLoggedIn()) {
+							const context = liff.getContext();
+							var data_list = [
+							{"uid_store":context.userId,"order_id":$('#order_id').val(),'type':'getID'},
+							]
+							$.ajax({
+								url:"/change_description/",
+								type:"POST",
+								data:{data:JSON.stringify(data_list)},
+								success:function(data) {
+
+									if (data.message == '成功'){
+										let str=''
+										if (data.description){
+										str+=
+											`
+												<textarea id ='description_text' rows='10' cols='40'>${data.description}</textarea>
+											`
+										}
+										else{
+											str+=
+											`
+											<textarea id ='description_text' rows='10' cols='40'></textarea>
+											`
+										}
+										$('#description').html(str)
+										$('#button_div').html (`<button class="w3-button w3-red" type='button' id = 'btn' >繳交</button>`)
+										$('#btn').click(function(){
+												order_id = $('#order_id').val()
+												data_list = [
+													{'description':$('#description_text').val(),'type':'change','order_id':order_id}
+												]
+												$.ajax({
+													url:"/change_description/",
+													type:"POST",
+													data:{data:JSON.stringify(data_list)},
+													success:function(data) {
+														alert(data.message)
+														window.location.href = `https://liff.line.me/1657551781-GpqEqJPY?order_id=${order_id}`
+														}
+													})
+												})
+										}
+									}
+										
+							})
+						}
+					else{
+						$('#error').addClass('alert alert-warning')
+							$('#error').text('請從line手機端登入')
+					}
+					
+			  
+			   
+			})
+	 })
+	</script>
+{% endblock %}
